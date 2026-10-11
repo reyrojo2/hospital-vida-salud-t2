@@ -1,0 +1,38 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: pacientes-service
+              uri: lb://PACIENTES-SERVICE
+              predicates:
+                - Path=/api/pacientes,/api/pacientes/**
+            - id: citas-service
+              uri: lb://CITAS-SERVICE
+              predicates:
+                - Path=/api/citas,/api/citas/**
+            - id: atenciones-service
+              uri: lb://ATENCIONES-SERVICE
+              predicates:
+                - Path=/api/atenciones,/api/atenciones/**
+            - id: pagos-service
+              uri: lb://PAGOS-SERVICE
+              predicates:
+                - Path=/api/pagos,/api/pagos/**
+            - id: notificaciones-service
+              uri: lb://NOTIFICACIONES-SERVICE
+              predicates:
+                - Path=/api/notificaciones,/api/notificaciones/**
+            - id: auditoria-service
+              uri: lb://AUDITORIA-SERVICE
+              predicates:
+                - Path=/api/auditoria,/api/auditoria/**
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}

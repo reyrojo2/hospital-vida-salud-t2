@@ -1,0 +1,19 @@
+server:
+  port: 8086
+spring:
+  application:
+    name: auditoria-service
+  r2dbc:
+    url: ${R2DBC_URL:r2dbc:postgresql://localhost:5432/hospital_auditoria}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+  rabbitmq:
+    host: ${RABBIT_HOST:localhost}
+    port: ${RABBIT_PORT:5672}
+    username: ${RABBIT_USER}
+    password: ${RABBIT_PASSWORD}
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
+
