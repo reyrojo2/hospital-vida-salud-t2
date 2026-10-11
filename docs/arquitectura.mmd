@@ -1,0 +1,24 @@
+flowchart TB
+ Cliente[Paciente / Personal de admision - Postman] --> G[Spring Cloud Gateway :8080]
+ G -. descubre destinos .-> E[Eureka Discovery :8761]
+ G --> P[Pacientes :8081]
+ G --> C[Citas :8082]
+ G --> A[Atenciones :8083]
+ G --> PG[Pagos :8084]
+ G --> N[Notificaciones :8085]
+ G --> AU[Auditoria :8086]
+ C -- WebClient + Eureka: validar paciente --> P
+ A -- WebClient + Eureka: validar cita --> C
+ PG -- WebClient + Eureka: validar paciente --> P
+ P --> DP[(PostgreSQL: hospital_pacientes)]
+ C --> DC[(PostgreSQL: hospital_citas)]
+ A --> DA[(PostgreSQL: hospital_atenciones)]
+ PG --> DG[(PostgreSQL: hospital_pagos)]
+ N --> DN[(PostgreSQL: hospital_notificaciones)]
+ AU --> DU[(PostgreSQL: hospital_auditoria)]
+ C -- evento cita.confirmada / cita.actualizada --> R[[RabbitMQ Topic Exchange hospital.eventos]]
+ R --> N
+ R --> AU
+ G -. descubrimiento lb .-> E
+ GH[GitHub: push / PR] --> GA[GitHub Actions]
+ GA --> M[Maven verify: compilar y ejecutar pruebas]

@@ -1,0 +1,21 @@
+name: CI - Hospital Vida Salud
+on:
+  push:
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar codigo
+        uses: actions/checkout@v4
+      - name: Configurar Java 21 y cache Maven
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Compilar y ejecutar todas las pruebas
+        run: mvn --batch-mode --no-transfer-progress verify

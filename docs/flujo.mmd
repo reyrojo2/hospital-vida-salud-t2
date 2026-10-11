@@ -1,0 +1,30 @@
+sequenceDiagram
+    actor Persona as Personal de admision
+    participant GW as API Gateway
+    participant P as Pacientes
+    participant C as Citas
+    participant DBP as SQL Pacientes
+    participant DBC as SQL Citas
+    participant MQ as RabbitMQ
+    participant N as Notificaciones
+    participant A as Auditoria
+    Persona->>GW: POST /api/pacientes
+    GW->>P: enruta usando Eureka
+    P->>DBP: R2DBC verifica documento e inserta
+    DBP-->>P: paciente nuevo
+    P-->>Persona: HTTP 201 + id
+    Persona->>GW: POST /api/citas
+    GW->>C: enruta usando Eureka
+    C->>P: WebClient GET /api/pacientes/{id}
+    P-->>C: existente y ACTIVO
+    C->>DBC: R2DBC valida agenda e inserta
+    C-->>Persona: HTTP 201 + cita PENDIENTE
+    Persona->>GW: PATCH /api/citas/{id}/estado CONFIRMADA
+    GW->>C: enruta usando Eureka
+    C->>DBC: R2DBC actualiza estado
+    C->>MQ: publica CitaConfirmada
+    MQ-->>N: cola notificaciones.citas
+    MQ-->>A: cola auditoria.citas
+    N->>N: guardar aviso ficticio con R2DBC
+    A->>A: guardar transicion con R2DBC
+    C-->>Persona: HTTP 200 + cita confirmada
