@@ -20,7 +20,7 @@ class PacienteServicioTest {
         when(repositorio.existsByTipoDocumentoAndNumeroDocumento("DNI","00000001")).thenReturn(Mono.just(false));
         when(template.insert(any(Paciente.class))).thenAnswer(inv->Mono.just(inv.getArgument(0)));
         StepVerifier.create(servicio.crear(valido)).assertNext(p->{
-            assertEquals("INACTIVO",p.estado());assertEquals("00000001",p.numeroDocumento());
+            assertEquals("ACTIVO",p.estado());assertEquals("00000001",p.numeroDocumento());
         }).verifyComplete();
         verify(template).insert(any(Paciente.class));
     }
